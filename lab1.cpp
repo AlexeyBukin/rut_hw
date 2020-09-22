@@ -1,12 +1,7 @@
-//#include <iostream>
-//
-//int main() {
-//	std::cout << "Hello, World!" << std::endl;
-//	return 0;
-//}
 
 #include <string>
 #include <iostream>
+
 using namespace std;
 
 struct Para {
@@ -52,9 +47,7 @@ void Para::init(int f, int s) {
 		{
 			return ;
 		}
-	first = 0;
-	second = 0;
-	cout << "Ошибочные значения завершение программы..." << endl;
+	cout << "Ошибочные значения, завершение программы..." << endl;
 	exit(0);
 }
 
@@ -66,15 +59,10 @@ Para	make_Para(int f, int s)
 {
 	Para para = Para();
 	para.init(f, s);
-	if (para.first * para.second == 0)
-	{
-		cout << "Ошибочные значения завершение программы..." << endl;
-		exit(0);
-	}
 	return (para);
 }
 
-int main()
+int		main()
 {
 	Para para1{};
 	para1.init(2, 10);
@@ -89,5 +77,4 @@ int main()
 	Para para3 = make_Para(100, 5);
 	cout << "para3: ";
 	para3.display();
-
 }
