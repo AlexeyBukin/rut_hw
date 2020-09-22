@@ -32,10 +32,6 @@ Money_s		toMoney_s(double n) {
 	return (mon);
 }
 
-int			sign(long num) {
-	return (num < 0 ? -1 : 1);
-}
-
 double 		toDouble(Money_s m) {
 	int cop = m.cop;
 	if (m.rub < 0) {
@@ -135,15 +131,13 @@ void		demo_struct()
 	cout << "division       : " + toString(divide_num(mon3, num)) << endl;
 }
 
-
-
 //----------------------------------------------------------//
 
 class Money_c {
-	long		rub; // рубли
-	unsigned	char cop; // копейки
 
-
+private:
+	long			rub; // рубли
+	unsigned char	cop; // копейки
 
 public:
 	Money_c(long r, unsigned char c);
@@ -154,18 +148,15 @@ public:
 	double		toDouble();
 	void		display();
 
-	void		add(Money_c c);
-	void		substract(Money_c c);
+	void		add(Money_c a);
+	void		substract(Money_c s);
 
 	static int		compare(Money_c mon1, Money_c mon2);
 	static double	divide(Money_c mon1, Money_c mon2);
 
-	void mult_num(double d);
-
-	void divide_num(double n);
+	void	mult_num(double n);
+	void	divide_num(double n);
 };
-
-//Money_c toMoney_c(double d);
 
 string Money_c::toString() {
 	char buf[100];
@@ -187,19 +178,19 @@ double Money_c::toDouble() {
 	return ((double) rub + (double) icop / 100.0);
 }
 
-Money_c::Money_c(long r, unsigned char c) {
-	this->rub = r;
-	this->cop = c;
-}
+
 
 void Money_c::display() {
 	cout << "Сумма: " << toString() << endl;
 }
 
 void Money_c::add(Money_c a) {
-	Money_c tmp = Money_c(toDouble() + a.toDouble());
-	this->rub = tmp.rub;
-	this->cop = tmp.cop;
+	*this = Money_c(toDouble() + a.toDouble());
+}
+
+Money_c::Money_c(long r, unsigned char c) {
+	rub = r;
+	cop = c;
 }
 
 Money_c::Money_c(double n) {
@@ -211,14 +202,22 @@ Money_c::Money_c(double n) {
 		lrub--;
 		icop = 100 - icop;
 	}
-	this->rub = lrub;
-	this->cop = icop;
+	*this = Money_c(lrub, icop);
+}
+
+Money_c::Money_c() {
+	double sum;
+	cout << "Введите сумму: ";
+	cin >> sum;
+	Money_c tmp = Money_c(sum);
+	rub = tmp.rub;
+	cop = tmp.cop;
 }
 
 void Money_c::substract(Money_c s) {
 	Money_c tmp = Money_c(toDouble() - s.toDouble());
-	this->rub = tmp.rub;
-	this->cop = tmp.cop;
+	rub = tmp.rub;
+	cop = tmp.cop;
 }
 
 int Money_c::compare(Money_c mon1, Money_c mon2) {
@@ -237,30 +236,21 @@ double Money_c::divide(Money_c mon1, Money_c mon2) {
 	return (m1 / m2);
 }
 
-Money_c::Money_c() {
-	double sum;
-	cout << "Введите сумму: ";
-	cin >> sum;
-	Money_c tmp = Money_c(sum);
-	this->rub = tmp.rub;
-	this->cop = tmp.cop;
-}
-
 void Money_c::mult_num(double n) {
 	Money_c tmp = Money_c(toDouble() * n);
-	this->rub = tmp.rub;
-	this->cop = tmp.cop;
+	rub = tmp.rub;
+	cop = tmp.cop;
 }
 
 void Money_c::divide_num(double n) {
 	if (n == 0.0) {
-		this->rub = 0;
-		this->cop = 0;
+		rub = 0;
+		cop = 0;
 		return ;
 	}
 	Money_c tmp = Money_c(toDouble() / n);
-	this->rub = tmp.rub;
-	this->cop = tmp.cop;
+	rub = tmp.rub;
+	cop = tmp.cop;
 }
 
 void		demo_class()
