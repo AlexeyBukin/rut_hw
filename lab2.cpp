@@ -19,34 +19,52 @@ Money_s		init(long r, unsigned char c) {
 	return (mon);
 }
 
-Money_s		read() {
-	long r;
-	unsigned char c;
-	cout << "Введите рубли: ";
-	cin >> r;
-	cout << "Введите копейки: ";
-	cin >> c;
-	return init(r, c);
-}
-
-string		toString(Money_s money) {
-	return (to_string(money.rub) + "," + to_string(money.cop));
-}
-
-void		display(Money_s money) {
-	cout << "Сумма: " << toString(money) << endl;
+Money_s		toMoney_s(double n) {
+	auto rub = (long)n;
+	auto cop_d = n - (double)((long)n);
+	auto cop = (unsigned char)abs(round((cop_d) * 100.0));
+	if (n < 0.0)
+	{
+		rub--;
+		cop = 100 - cop;
+	}
+	Money_s mon = init(rub, cop);
+	return (mon);
 }
 
 int			sign(long num) {
 	return (num < 0 ? -1 : 1);
 }
 
-int			sign(Money_s money) {
-	return (sign(money.rub));
+double 		toDouble(Money_s m) {
+	int cop = m.cop;
+	if (m.rub < 0) {
+		cop -= 100;
+		m.rub++;
+	}
+	return ((double) m.rub + (double) cop / 100.0);
 }
 
-double 		toDouble(Money_s m) {
-	return ((double) m.rub + (double) m.cop * (double)sign(m) / 100.0);
+Money_s		read() {
+	double sum;
+	cout << "Введите сумму: ";
+	cin >> sum;
+	return (toMoney_s(sum));
+}
+
+string		toString(Money_s money) {
+	char buf[100];
+	int res = snprintf(buf, sizeof(buf), "%.2f", toDouble(money));
+	string str = "0.00";
+	if (res >= 0 && res < sizeof(buf))
+		str = buf;
+	size_t pos = str.find('.');
+	str.replace(pos, 1, ",");
+	return (str);
+}
+
+void		display(Money_s money) {
+	cout << "Сумма: " << toString(money) << endl;
 }
 
 int			compare(Money_s mon1, Money_s mon2) {
@@ -57,99 +75,239 @@ int			compare(Money_s mon1, Money_s mon2) {
 	return (m1 > m2 ? 1 : -1);
 }
 
-Money_s		toMoney_s(double n) {
-	Money_s m{};
-	m.rub = (long)n;
-	m.cop = (unsigned char) abs((n - (double)(m.rub)) * 100.0);
-	return (m);
-}
-
 Money_s		summa(Money_s mon1, Money_s mon2) {
-	mon1.cop = (mon1.cop * sign(mon1) + mon2.cop * sign(mon2)) * sign(mon1);
-	if ((mon1.cop * sign(mon1)) > 99) {
-		mon1.rub += sign(mon1) * 1;
-		mon1.cop = (mon1.cop * sign(mon1) - 100) * sign(mon1);
-	}
-	mon1.rub += mon2.rub;
-	return (mon1);
+	return (toMoney_s(toDouble(mon1) + toDouble(mon2)));
 }
 
 Money_s		raznost(Money_s mon1, Money_s mon2) {
-	long cop = (mon1.cop * sign(mon1) - mon2.cop * sign(mon2)) * sign(mon1);
-	long rub = mon1.rub - mon2.rub;
-
-	cout << "cop = " << cop << endl;
-	cout << "rub = " << rub << endl;
-
-	if (sign(cop) != sign(rub))
-		rub--;
-
-//	cout << "cop = " << cop << endl;
-//
-//	if (cop < 0) {
-//		mon1.rub -= sign(mon1) * 1;
-//		mon1.cop = abs(cop);
-//		if (sign(rub) == sign(mon1.rub)) {
-//			mon1.rub += sign(mon1);
-//		}
-//	}
-//	mon1.cop = abs(cop);
-//	if (sign(mon1) == sign(mon2)) {
-//		mon1.cop = abs(cop);
-//	}
-//	else {
-//		if (cop < 0) {
-//			mon1.rub -= sign(mon1) * 1;
-//			mon1.cop = cop + 100;
-//		}
-//	}
-	//	mon1.cop = abs(cop);
-
-//	mon1.rub -= mon2.rub;
-
-	mon1.cop = cop;
-	mon1.rub = rub;
-	return (mon1);
+	double m1 = round(toDouble(mon1) * 100);
+	double m2 = round(toDouble(mon2) * 100);
+	double m3 = round(m1 - m2) / 100;
+	return (toMoney_s(m3));
 }
 
 double		divide(Money_s mon1, Money_s mon2) {
-	double m1 = toDouble(mon1);
-	double m2 = toDouble(mon2);
-	if (m2 == 0.0)
+	double m1 = round(toDouble(mon1) * 100);
+	double m2 = round(toDouble(mon2) * 100);
+	if (round(m2) == 0.0)
 		return (0.0);
 	return (m1 / m2);
 }
 
 Money_s		multiply_num(Money_s m, double n) {
-	n = toDouble(m) * n;
-	return (toMoney_s(n));
+	return (toMoney_s(toDouble(m) * n));
 }
 
 Money_s		divide_num(Money_s m, double n) {
 	if (n == 0.0)
 		return (toMoney_s(0.0));
-	n = toDouble(m) / n;
-	return (toMoney_s(n));
+	double res = round(toDouble(m) * 100) / n / 100;
+	return (toMoney_s(res));
 }
 
-int		main()
+void		demo_struct()
 {
-	double num = 1.5;
-	Money_s mon1 = init(-1, 10);
-	Money_s mon2 = init(-1, 55);
+	cout << "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑" << endl;
+	cout << "| Демонстрация структурного варианта |" << endl;
+	cout << "┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙" << endl << endl;
+
+	Money_s mon1 = init(2, 02);
+	Money_s mon2 = init(3, 55);
 
 	cout << "mon1: "; display(mon1);
 	cout << "mon2: "; display(mon2);
 	cout << endl;
+
 	cout << "sum: " + toString(summa(mon1, mon2)) << endl;
 	cout << "raz: " + toString(raznost(mon1, mon2)) << endl;
 	cout << "cmp: " + to_string(compare(mon1, mon2)) << endl;
 	cout << "div: " + to_string(divide(mon1, mon2)) << endl;
 	cout << endl;
-	cout << endl;
+
+	double num = 1.5;
 	cout << "num: " + to_string(num) << endl;
-	cout << "mon: " + toString(mon1) << endl;
+
+	Money_s mon3 = read();
+	cout << "mon: " + toString(mon3) << endl;
 	cout << endl;
-	cout << "multiplication : " + toString(multiply_num(mon1, num)) << endl;
-	cout << "division       : " + toString(divide_num(mon1, num)) << endl;
+
+	cout << "multiplication : " + toString(multiply_num(mon3, num)) << endl;
+	cout << "division       : " + toString(divide_num(mon3, num)) << endl;
+}
+
+
+
+//----------------------------------------------------------//
+
+class Money_c {
+	long		rub; // рубли
+	unsigned	char cop; // копейки
+
+
+
+public:
+	Money_c(long r, unsigned char c);
+	Money_c(double n);
+	Money_c();
+
+	string		toString();
+	double		toDouble();
+	void		display();
+
+	void		add(Money_c c);
+	void		substract(Money_c c);
+
+	static int		compare(Money_c mon1, Money_c mon2);
+	static double	divide(Money_c mon1, Money_c mon2);
+
+	void mult_num(double d);
+
+	void divide_num(double n);
+};
+
+//Money_c toMoney_c(double d);
+
+string Money_c::toString() {
+	char buf[100];
+	int res = snprintf(buf, sizeof(buf), "%.2f", toDouble());
+	string str = "0.00";
+	if (res >= 0 && res < sizeof(buf))
+		str = buf;
+	size_t pos = str.find('.');
+	str.replace(pos, 1, ",");
+	return (str);
+}
+
+double Money_c::toDouble() {
+	int icop = cop;
+	if (rub < 0) {
+		icop -= 100;
+		rub++;
+	}
+	return ((double) rub + (double) icop / 100.0);
+}
+
+Money_c::Money_c(long r, unsigned char c) {
+	this->rub = r;
+	this->cop = c;
+}
+
+void Money_c::display() {
+	cout << "Сумма: " << toString() << endl;
+}
+
+void Money_c::add(Money_c a) {
+	Money_c tmp = Money_c(toDouble() + a.toDouble());
+	this->rub = tmp.rub;
+	this->cop = tmp.cop;
+}
+
+Money_c::Money_c(double n) {
+	auto lrub = (long)n;
+	auto cop_d = n - (double)((long)n);
+	auto icop = (unsigned char)abs(round((cop_d) * 100.0));
+	if (n < 0.0)
+	{
+		lrub--;
+		icop = 100 - icop;
+	}
+	this->rub = lrub;
+	this->cop = icop;
+}
+
+void Money_c::substract(Money_c s) {
+	Money_c tmp = Money_c(toDouble() - s.toDouble());
+	this->rub = tmp.rub;
+	this->cop = tmp.cop;
+}
+
+int Money_c::compare(Money_c mon1, Money_c mon2) {
+	double m1 = mon1.toDouble();
+	double m2 = mon2.toDouble();
+	if (m1 == m2)
+		return (0);
+	return (m1 > m2 ? 1 : -1);
+}
+
+double Money_c::divide(Money_c mon1, Money_c mon2) {
+	double m1 = round(mon1.toDouble() * 100);
+	double m2 = round(mon2.toDouble() * 100);
+	if (round(m2) == 0.0)
+		return (0.0);
+	return (m1 / m2);
+}
+
+Money_c::Money_c() {
+	double sum;
+	cout << "Введите сумму: ";
+	cin >> sum;
+	Money_c tmp = Money_c(sum);
+	this->rub = tmp.rub;
+	this->cop = tmp.cop;
+}
+
+void Money_c::mult_num(double n) {
+	Money_c tmp = Money_c(toDouble() * n);
+	this->rub = tmp.rub;
+	this->cop = tmp.cop;
+}
+
+void Money_c::divide_num(double n) {
+	if (n == 0.0) {
+		this->rub = 0;
+		this->cop = 0;
+		return ;
+	}
+	Money_c tmp = Money_c(toDouble() / n);
+	this->rub = tmp.rub;
+	this->cop = tmp.cop;
+}
+
+void		demo_class()
+{
+	cout << "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑" << endl;
+	cout << "|  Демонстрация классового варианта  |" << endl;
+	cout << "┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙" << endl << endl;
+
+	Money_c mon1 = Money_c(2, 02);
+	Money_c mon2 = Money_c(3, 55);
+
+	cout << "mon1: "; mon1.display();
+	cout << "mon2: "; mon2.display();
+	cout << endl;
+
+	Money_c sum = mon1;
+	sum.add(mon2);
+	cout << "sum: " + sum.toString() << endl;
+
+	Money_c raz = mon1;
+	raz.substract(mon2);
+	cout << "raz: " + raz.toString() << endl;
+
+	cout << "cmp: " + to_string(Money_c::compare(mon1, mon2)) << endl;
+	cout << "div: " + to_string(Money_c::divide(mon1, mon2)) << endl;
+	cout << endl;
+
+	double num = 1.5;
+	Money_c input = Money_c(); // вводится из терминала
+	cout << "number: " + to_string(num) << endl;
+	cout << "money : " + input.toString() << endl;
+	cout << endl;
+
+	Money_c mult = input;
+	mult.mult_num(num);
+	cout << "multiplication : " + mult.toString() << endl;
+
+	Money_c div = input;
+	div.divide_num(num);
+	cout << "division       : " + div.toString() << endl;
+}
+
+//--------------------------//
+
+int		main()
+{
+	demo_struct();
+	cout << endl;
+	demo_class();
 }
