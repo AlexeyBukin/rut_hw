@@ -12,14 +12,10 @@ private:
 	unsigned char	cop; // копейки
 
 public:
-	Money(long r, unsigned char c);
-	Money(double n);
-	Money();
-	Money(Money &m) : scale_of_notation(pn. getScaleOfNotation()) {
-		int len = strlen(pn.getNumber());
-		strncpy(number,pn.getNumber(),strlen(pn.getNumber()));
-		number[len] = '\0';
-	}
+	Money(long r, unsigned char c) : rub(r), cop(c) {}; // конструктор инициализации
+	Money(double n); // конструктор инициализации
+	Money(const Money &m); // конструктор копирования
+	Money(); // конструктор без аргументов
 
 	string		toString();
 	double		toDouble();
@@ -35,7 +31,32 @@ public:
 	void	divide_num(double n);
 };
 
+Money::Money(double n) {
+	long lrub = (long)n;
+	double cop_d = n - (double)((long)n);
+	int icop = (unsigned char)abs(round((cop_d) * 100.0));
+	if (n < 0.0)
+	{
+		lrub--;
+		icop = 100 - icop;
+	}
+	rub = lrub;
+	cop = icop;
+}
 
+Money::Money(const Money &m) {
+	rub = m.rub;
+	cop = m.cop;
+}
+
+Money::Money() {
+	double sum;
+	cout << "Введите сумму: ";
+	cin >> sum;
+	Money tmp = Money(sum);
+	rub = tmp.rub;
+	cop = tmp.cop;
+}
 
 string Money::toString() {
 	char buf[100];
@@ -57,11 +78,6 @@ double Money::toDouble() {
 	return ((double) rub + (double) icop / 100.0);
 }
 
-Money::Money(long r, unsigned char c) {
-	rub = r;
-	cop = c;
-}
-
 void Money::display() {
 	cout << "Сумма: " << toString() << endl;
 }
@@ -70,19 +86,6 @@ void Money::add(Money a) {
 	Money tmp = Money(toDouble() + a.toDouble());
 	rub = tmp.rub;
 	cop = tmp.cop;
-}
-
-Money::Money(double n) {
-	auto lrub = (long)n;
-	auto cop_d = n - (double)((long)n);
-	auto icop = (unsigned char)abs(round((cop_d) * 100.0));
-	if (n < 0.0)
-	{
-		lrub--;
-		icop = 100 - icop;
-	}
-	rub = lrub;
-	cop = icop;
 }
 
 void Money::substract(Money s) {
@@ -107,15 +110,6 @@ double Money::divide(Money mon1, Money mon2) {
 	return (m1 / m2);
 }
 
-Money::Money() {
-	double sum;
-	cout << "Введите сумму: ";
-	cin >> sum;
-	Money tmp = Money(sum);
-	rub = tmp.rub;
-	cop = tmp.cop;
-}
-
 void Money::mult_num(double n) {
 	Money tmp = Money(toDouble() * n);
 	rub = tmp.rub;
@@ -133,13 +127,13 @@ void Money::divide_num(double n) {
 	cop = tmp.cop;
 }
 
-void		demo_class()
+int		main()
 {
 	cout << "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑" << endl;
-	cout << "|  Демонстрация классового варианта  |" << endl;
+	cout << "|    Демонстрация работы функций     |" << endl;
 	cout << "┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙" << endl << endl;
 
-	Money mon1 = Money(2, 02);
+	Money mon1 = Money(2, 2);
 	Money mon2 = Money(3, 55);
 
 	cout << "mon1: "; mon1.display();
@@ -171,4 +165,19 @@ void		demo_class()
 	Money div = input;
 	div.divide_num(num);
 	cout << "division       : " + div.toString() << endl;
+
+	cout << "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑" << endl;
+	cout << "|  Демонстрация работы с классами    |" << endl;
+	cout << "┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙" << endl << endl;
+
+	Money *money_heap = new Money(1, 99);
+	cout << "money_heap: "; money_heap->display();
+
+	int money_num = 8;
+	Money *array[money_num];
+
+	for (int i = 0; i < money_num; i++) {
+		array[i] = new Money(i, i);
+		cout << "array[" << i << "] : "; array[i]->display();
+	}
 }
