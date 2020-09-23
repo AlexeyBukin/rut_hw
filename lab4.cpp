@@ -12,7 +12,12 @@ private:
 	unsigned char	cop; // копейки
 
 public:
-	Money(long r, unsigned char c) : rub(r), cop(c) {}; // конструктор инициализации
+	Money(long r, unsigned char c) : rub(r), cop(c) { // конструктор инициализации
+		if (c > 99) {
+			cout << "Ошибочные значения, завершение программы..." << endl;
+			exit(0);
+		}
+	};
 	Money(double n); // конструктор инициализации
 	Money(const Money &m); // конструктор копирования
 	Money(); // конструктор без аргументов
@@ -25,10 +30,11 @@ public:
 	void		substract(Money s);
 
 	static int		compare(Money mon1, Money mon2);
-	static double	divide(Money mon1, Money mon2);
+
+	static double	divide(Money mon1, Money mon2); // перегрузка функции деления
+	void			divide(double n);
 
 	void	mult_num(double n);
-	void	divide_num(double n);
 };
 
 Money::Money(double n) {
@@ -39,6 +45,10 @@ Money::Money(double n) {
 	{
 		lrub--;
 		icop = 100 - icop;
+	}
+	if (icop > 99) {
+		cout << "Ошибочные значения, завершение программы..." << endl;
+		exit(0);
 	}
 	rub = lrub;
 	cop = icop;
@@ -102,7 +112,13 @@ int Money::compare(Money mon1, Money mon2) {
 	return (m1 > m2 ? 1 : -1);
 }
 
-double Money::divide(Money mon1, Money mon2) {
+void Money::mult_num(double n) {
+	Money tmp = Money(toDouble() * n);
+	rub = tmp.rub;
+	cop = tmp.cop;
+}
+
+double		Money::divide(Money mon1, Money mon2) {
 	double m1 = round(mon1.toDouble() * 100);
 	double m2 = round(mon2.toDouble() * 100);
 	if (round(m2) == 0.0)
@@ -110,13 +126,7 @@ double Money::divide(Money mon1, Money mon2) {
 	return (m1 / m2);
 }
 
-void Money::mult_num(double n) {
-	Money tmp = Money(toDouble() * n);
-	rub = tmp.rub;
-	cop = tmp.cop;
-}
-
-void Money::divide_num(double n) {
+void		Money::divide(double n) {
 	if (n == 0.0) {
 		rub = 0;
 		cop = 0;
@@ -130,7 +140,7 @@ void Money::divide_num(double n) {
 int		main()
 {
 	cout << "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑" << endl;
-	cout << "|    Демонстрация работы функций     |" << endl;
+	cout << "|  Демонстрация работы перегрузок    |" << endl;
 	cout << "┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙" << endl << endl;
 
 	Money mon1 = Money(2, 2);
@@ -149,7 +159,7 @@ int		main()
 	cout << "raz: " + raz.toString() << endl;
 
 	cout << "cmp: " + to_string(Money::compare(mon1, mon2)) << endl;
-	cout << "div: " + to_string(Money::divide(mon1, mon2)) << endl;
+	cout << "div: " + to_string(Money::divide(mon1, mon2)) << endl; //использование перегруженной функции
 	cout << endl;
 
 	double num = 1.5;
@@ -163,8 +173,8 @@ int		main()
 	cout << "multiplication : " + mult.toString() << endl;
 
 	Money div = input;
-	div.divide_num(num);
-	cout << "division       : " + div.toString() << endl;
+	div.divide(num); //использование перегруженной функции
+	cout << "division       : " + div.toString() << endl << endl;
 
 	cout << "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑" << endl;
 	cout << "|  Демонстрация работы с классами    |" << endl;

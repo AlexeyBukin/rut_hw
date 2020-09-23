@@ -64,12 +64,12 @@ Para	make_Para(int f, int s)
 
 int		main()
 {
-	Para para1{};
+	Para para1 = {};
 	para1.init(2, 10);
 	cout << "para1: ";
 	para1.display();
 
-	Para para2{};
+	Para para2 = {};
 	para2.read();
 	cout << "para2: ";
 	para2.display();

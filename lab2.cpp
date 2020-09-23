@@ -15,14 +15,14 @@ Money_s		init(long r, unsigned char c) {
 		cout << "Ошибочные значения, завершение программы..." << endl;
 		exit(0);
 	}
-	Money_s mon{r, c};
+	Money_s mon = {r, c};
 	return (mon);
 }
 
 Money_s		toMoney_s(double n) {
-	auto rub = (long)n;
-	auto cop_d = n - (double)((long)n);
-	auto cop = (unsigned char)abs(round((cop_d) * 100.0));
+	long rub = (long)n;
+	double cop_d = n - (double)((long)n);
+	unsigned char cop = (unsigned char)abs(round((cop_d) * 100.0));
 	if (n < 0.0)
 	{
 		rub--;
@@ -178,8 +178,6 @@ double Money_c::toDouble() {
 	return ((double) rub + (double) icop / 100.0);
 }
 
-
-
 void Money_c::display() {
 	cout << "Сумма: " << toString() << endl;
 }
@@ -189,14 +187,18 @@ void Money_c::add(Money_c a) {
 }
 
 Money_c::Money_c(long r, unsigned char c) {
+	if (c > 99) { // проверка значений копеек
+		cout << "Ошибочные значения, завершение программы..." << endl;
+		exit(0);
+	}
 	rub = r;
 	cop = c;
 }
 
 Money_c::Money_c(double n) {
-	auto lrub = (long)n;
-	auto cop_d = n - (double)((long)n);
-	auto icop = (unsigned char)abs(round((cop_d) * 100.0));
+	long lrub = (long)n;
+	double cop_d = n - (double)((long)n);
+	int icop = (unsigned char)abs(round((cop_d) * 100.0));
 	if (n < 0.0)
 	{
 		lrub--;

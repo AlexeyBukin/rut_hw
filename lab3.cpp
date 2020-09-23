@@ -12,7 +12,12 @@ private:
 	unsigned char	cop; // копейки
 
 public:
-	Money(long r, unsigned char c) : rub(r), cop(c) {}; // конструктор инициализации
+	Money(long r, unsigned char c) : rub(r), cop(c) { // конструктор инициализации
+		if (c > 99) {
+			cout << "Ошибочные значения, завершение программы..." << endl;
+			exit(0);
+		}
+	};
 	Money(double n); // конструктор инициализации
 	Money(const Money &m); // конструктор копирования
 	Money(); // конструктор без аргументов
@@ -39,6 +44,10 @@ Money::Money(double n) {
 	{
 		lrub--;
 		icop = 100 - icop;
+	}
+	if (icop > 99) { // проверка значений копеек
+		cout << "Ошибочные значения, завершение программы..." << endl;
+		exit(0);
 	}
 	rub = lrub;
 	cop = icop;
