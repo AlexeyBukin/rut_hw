@@ -11,8 +11,8 @@ class Array {
 
 protected:
 	unsigned char	*array;
-	unsigned char	size; // размер массива
 	unsigned char	initial_value; // значение по умолчанию для элемента
+	unsigned char	size; // размер массива
 
 public:
 	Array(unsigned char arr_size); // конструктор инициализации
@@ -20,10 +20,9 @@ public:
 	Array(const Array &a); // конструктор копирования
 	Array() : size(0), initial_value(0), array(nullptr) {}; // конструктор без аргументов
 
-	unsigned char&	operator[](int index); // оператор индексирования
+	virtual unsigned char&	operator[](int index); // оператор индексирования
 	virtual void	sum_with(Array &a); //функция поэлементного сложения
-	string			toString();
-
+	virtual string	toString();
 };
 
 Array::Array(unsigned char arr_size) {
@@ -81,11 +80,45 @@ void			Array::sum_with(Array &a) {
 	array = max_arr;
 }
 
+class BitString : public Array {
+
+public:
+	BitString(unsigned char arr_size): Array(arr_size) {}; // конструктор инициализации
+	BitString() : Array(0) {}; // конструктор без аргументов
+
+	virtual unsigned char&	operator[](int index); // оператор индексирования
+
+	virtual void		sum_with(Array &a); //функция поэлементного сложения
+	virtual string		toString();
+
+};
+
+string BitString::toString() {
+	ostringstream s;
+	s << "BitString: \'";
+	for (int i = 0; i < size; i++)
+		s << (int)array[i];
+	s << "\'";
+	return s.str();
+}
+
+// оператор индексирования
+unsigned char&	BitString::operator[](const int index) {
+	if (index < 0 || index >= size)
+		return (initial_value);
+	return array[index];
+}
+
+void BitString::sum_with(Array &a) {
+	Array::sum_with(a);
+	for (int i = 0; i < size; i++)
+		array[i] = array[i] ? 1 : 0;
+}
 
 int		main()
 {
 	cout << "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑" << endl;
-	cout << "|  Демонстрация работы массивов      |" << endl;
+	cout << "|  Демонстрация работы функций       |" << endl;
 	cout << "┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙" << endl << endl;
 
 	Array a1 = Array();
@@ -96,29 +129,29 @@ int		main()
 	cout << "С размером 4    : " << a2.toString() << endl;
 	cout << "С заполнением 7 : " << a3.toString() << endl;
 
-//	cout << "Произведение пары " << p2.toString() << " равно " << p2.mult() << endl;
-//
-//	Pair p3 = Pair(p2);
-//	cout << endl << "Копирование : " << p2.toString() << " -> " << p3.toString() << endl;
-//
-//
-//
-//	Rectangle r = Rectangle(); // введение данных с терминала
-//	cout << endl << r.toString() << endl << endl; // использование принципа подстановки
-//
-//	cout << "┍━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┑" << endl;
-//	cout << "|  Демонстрация работы с классами    |" << endl;
-//	cout << "┕━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┙" << endl << endl;
-//
-//	Pair *pair_heap = new Pair(2, 5);
-//	cout << "pair_heap: " << pair_heap->toString() << endl << endl;
-//
-//	int rect_num = 5;
-//	Rectangle *array[rect_num];
-//
-//	for (int i = 1; i <= rect_num; i++) {
-//		array[i] = new Rectangle(i * 2, i * 3);
-//		cout << array[i]->toString() << endl;
-//	}
+	BitString b1 = BitString(2);
+	BitString *b2 = new BitString(2);
+	Array a4 = BitString(2);
+	Array *a5 = new BitString(2);
+
+	cout << endl;
+	cout << "b1 : " << b1.toString() << endl;
+	cout << "b2 : " << b2->toString() << endl;
+	cout << "a4 : " << a4.toString() << endl;
+	cout << "a5 : " << a5->toString() << endl; // в объекте типа Array лежит BitString
+	// вызывается виртуальная функция BitString из объекта Array
+
+	Array *a6 = new BitString(5);
+	Array *a7 = new Array(5, 9);
+	(*a7)[1] = 0;
+	(*a7)[3] = 0;
+
+	cout << endl;
+	cout << "a6 : " << a6->toString() << endl;
+	cout << "a7 : " << a7->toString() << endl;
+
+	a6->sum_with(*a7); // срамботала виртуальная функция сложения из BitString
+	cout << "a6 после сложения с a7: " << a6->toString() << endl;
+
 	return (0);
 }
