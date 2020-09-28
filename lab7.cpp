@@ -1,7 +1,7 @@
-#ifndef ExeptionFuncH
-#define ExeptionFuncH
 
+#include <iostream>
 #include <string>
+
 using namespace std;
 
 // Структура, описываюшщая время
@@ -26,7 +26,7 @@ class MyTimeException {
 		hours(phours), mins(pmins), message(s) {}
 };
 
-class MyTimeException2 : public invalid_argument{
+class MyTimeException2 : public invalid_argument {
 	int hours;
 	int mins;
 
@@ -37,15 +37,6 @@ class MyTimeException2 : public invalid_argument{
 	MyTimeException2(int phours, int pmins, const string& s) :
 		hours(phours), mins(pmins), invalid_argument(s) {}
 };
-
-#endif
-
-#pragma hdrstop
- 
-#include <iostream>
-#include <ExeptionFunc.h>
- 
-#pragma argsused
 
 int TimeSfirst(MyTime Time) {
 // не проверяются параметры
@@ -76,9 +67,13 @@ int TimeSfour(MyTime Time) {
 //Главная функция
 int main(int argc, char* argv[])
 {
-	int hours = -1, mins = 2;
- 
- 
+
+	int hours = 0, mins = 0;
+	cout << "Введите часы: ";
+	cin >> hours;
+	cout << "Введите минуты: ";
+	cin >> mins;
+
 	MyTime mytime(hours, mins); 
 	// обработка исключения
 	try {
@@ -110,8 +105,6 @@ int main(int argc, char* argv[])
 	catch (MyTimeException2 e) {
 		cout << e.what() << endl;
 	}
-	int a;
-	cin >> a;
  
 	return 0;
 }
