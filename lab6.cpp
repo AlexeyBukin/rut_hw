@@ -150,7 +150,7 @@ int		main()
 	cout << "a6 : " << a6->toString() << endl;
 	cout << "a7 : " << a7->toString() << endl;
 
-	a6->sum_with(*a7); // срамботала виртуальная функция сложения из BitString
+	a6->sum_with(*a7); // сработала виртуальная функция сложения из BitString
 	cout << "a6 после сложения с a7: " << a6->toString() << endl;
 
 	return (0);
